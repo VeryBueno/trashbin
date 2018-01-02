@@ -30,6 +30,7 @@ class Parser
         }
 
         $paste['created_at'] = $request->server->get('REQUEST_TIME');
+	$paste['id'] = $id;
 
         return array($id, $paste);
     }

@@ -20,10 +20,12 @@
 <h2>view paste</h2>
 
 <p>created on {{ paste.created_at|date }}</p>
+<hr/>
+<textarea class="sh_{{ paste.language|default('') }}">{{ paste.content }}</textarea>
 
-<pre class="sh_{{ paste.language|default('') }}">{{ paste.content }}</pre>
-
+<hr/>
 <span><a href="{{ index_url }}">new paste</a></span>
 <span><a href="{{ copy_url }}">copy</a></span>
+<span><a href="/{{paste.id}}/delete">delete</a></span>
 
 {% endblock %}

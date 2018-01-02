@@ -52,7 +52,6 @@ $app->post('/', function (Request $request) use ($app) {
 
         return new Response($page, 400);
     }
-
     $app['app.storage']->set($id, $paste);
 
     return $app->redirect($app['url_generator']->generate('view', array('id' => $id)));
@@ -77,6 +76,54 @@ $app->get('/{id}', function (Request $request, $id) use ($app) {
 })
 ->bind('view')
 ->assert('id', '[0-9a-f]{8}');
+
+$app->get('/{id}/delete', function (Request $request, $id) use ($app) {
+    $paste = $app['app.storage']->get($id);
+
+    if (!$paste) {
+        $app->abort(404, 'paste not found');
+    }
+
+    $app['app.storage']->delete($id);
+    return $app->redirect($app['url_generator']->generate('homepage'));
+})
+->bind('delete')
+->assert('id', '[0-9a-f]{8}');
+
+$app->get('/list', function (Request $request) use ($app) {
+    $keys = $app['app.storage']->all();
+    $pastes = array();
+
+    if (!$keys) {
+        $app->abort(404, 'paste not found');
+    }
+
+    foreach($keys as $key){
+	array_push($pastes,
+           $app['app.storage']->get($key)
+	);
+    }
+
+    $sortArray = array(); 
+
+    foreach($pastes as $paste){ 
+        foreach($paste as $key=>$value){ 
+            if(!isset($sortArray[$key])){ 
+                $sortArray[$key] = array(); 
+            } 
+            $sortArray[$key][] = $value; 
+        } 
+    } 
+
+    $orderby = "created_at";
+
+    array_multisort($sortArray[$orderby],SORT_DESC,$pastes);
+
+    return $app['twig']->render('list.html.twig', array(
+        'pastes'		=> $pastes
+    ));
+})
+->bind('list');
 
 $app->error(function (Exception $e) use ($app) {
     if ($app['debug']) {

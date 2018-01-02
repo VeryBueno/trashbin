@@ -1,0 +1,13 @@
+{% extends "layout.html.twig" %}
+{% block body %}
+<h1>Pastes</h1>
+<div>
+<span><a href="/">new paste</a></span>
+<br style="clear:both"/>
+</div>
+<div>
+{% for paste in pastes %}
+    <p><a href="/{{paste.id}}">{{ paste.id }}</a> created on {{ paste.created_at}}</p>
+</div>
+{% endfor %}
+{% endblock %}

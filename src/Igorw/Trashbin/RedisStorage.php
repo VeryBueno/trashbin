@@ -22,4 +22,14 @@ class RedisStorage implements Storage
     {
         return $this->redis->hmset($id, $value);
     }
+
+    public function all()
+    {
+	return $this->redis->keys('*');
+    }
+
+    public function delete($id)
+    {
+        return $this->redis->del($id);
+    }
 }
